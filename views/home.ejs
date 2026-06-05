@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JJP - Shop</title>
+    <link rel="stylesheet" href="public/styles/main.css" />
+    <!-- <script src="data/mydata.js"></script>
+    <script src="public/scripts/quantities.js"></script> -->
+    <!-- <script defer src="public/scripts/app.js"></script> -->
+    <!-- na ovaj način imam pristup data.js u app.js -->
+  </head>
+  <body>
+    <div class="grid-container">
+      <div class="grid-item" id="gi1">
+        <img src="public/images/logotip/JJP.png" alt="JJP Logo" />
+      </div>
+      <div class="grid-item" id="gi2"><h2>Suplementi</h2></div>
+      <div class="grid-item" id="gi3">
+        <a class="cartA" href="cart">
+          <p class="cart-number"></p>
+          <img
+            src="public/images/ikone/cart-shopping-svgrepo-com.svg"
+            alt="Ikonica košarice"
+          />
+        </a>
+        <img
+          src="public/images/ikone/search-svgrepo-com.svg"
+          alt="Ikonica tražilice"
+        />
+      </div>
+
+      <div class="grid-item" id="gi4">
+        <span class="kateg">KATEGORIJE</span>
+        <ul>
+          <li onclick="promijeniKategoriju('Crossfit', this)">Crossfit</li>
+          <li onclick="promijeniKategoriju('Joga', this)">Joga</li>
+          <li onclick="promijeniKategoriju('Kardio', this)">Kardio</li>
+          <li onclick="promijeniKategoriju('Klupe', this)">Klupe</li>
+          <li onclick="promijeniKategoriju('Muška odjeća', this)">
+            Muška odjeća
+          </li>
+          <li onclick="promijeniKategoriju('Ženska odjeća', this)">
+            Ženska odjeća
+          </li>
+          <li onclick="promijeniKategoriju('Šipke', this)">Šipke</li>
+          <li onclick="promijeniKategoriju('Suplementi', this)">Suplementi</li>
+          <li onclick="promijeniKategoriju('Uređaji', this)">Uređaji</li>
+          <li onclick="promijeniKategoriju('Utezi', this)">Utezi</li>
+        </ul>
+      </div>
+      <div class="grid-item" id="gi5">
+        <div class="hero-text">
+          <h3>Fokus na rezultate i moć.</h3>
+        </div>
+      </div>
+      <div class="grid-item" id="gi8">
+        <div class="flex-prod-container">
+          <div class="prod-container">
+            <div class="img-container">
+              <p class="cart-number"></p>
+              <img
+                src="public/images/kategorija-suplementi/suplementi(1).jpg"
+                alt="Boca za vodu"
+              />
+              <img
+                onclick="dodajUKosaricu(this)"
+                id="cart-over"
+                src="public/images/ikone/cart-shopping-svgrepo-com.svg"
+                alt="Košarica preko proizvoda"
+              />
+            </div>
+            <span class="prod-text"
+              ><span class="prod-bold">Boca za vodu</span><br />SUPLEMENTI</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="grid-item" id="gi9">
+        <ul>
+          <li>Kontakt</li>
+          <li>Newsletter</li>
+          <li>Pretplati se</li>
+        </ul>
+        <p><span class="CC"></span>© JJP Shop</p>
+      </div>
+    </div>
+  </body>
+</html>

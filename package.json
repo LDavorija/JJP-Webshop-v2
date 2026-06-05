@@ -1,0 +1,27 @@
+{
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.1.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-html": "^8.1.4",
+    "eslint-plugin-prettier": "^5.5.5",
+    "prettier": "^3.8.1"
+  },
+  "name": "jjp-webshop",
+  "version": "1.0.0",
+  "description": "JJP Shop (Još jedno ponavljanje Shop) je webshop nastao u okviru laboratorijske vježbe na kolegiju Razvoj programske potpore za Web na FER-u.",
+  "main": "eslint.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "path": "^0.12.7"
+  }
+}

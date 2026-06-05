@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JJP - Košarica</title>
+    <link rel="stylesheet" href="public\styles\cart.css" />
+    <script defer src="public\scripts\cart.js"></script>
+    <!-- obavezno defer jer se prvo treba učitati html, a tek onda js! -->
+  </head>
+  <body>
+    <div class="grid-container">
+      <div class="grid-item" id="gi1">
+        <img src="public/images/logotip/JJP.png" alt="JJP Logo" />
+      </div>
+
+      <div class="grid-item" id="gi2">
+        <h2>KOŠARICA</h2>
+      </div>
+
+      <div class="grid-item" id="gi3">
+        <a class="cartA" href="cart.html">
+          <p class="cart-number"></p>
+          <img
+            src="public\images\ikone\cart-shopping-svgrepo-com.svg"
+            alt="Ikonica košarice"
+          />
+        </a>
+        <img
+          src="public/images/ikone/search-svgrepo-com.svg"
+          alt="Ikonica tražilice"
+        />
+      </div>
+
+      <div class="grid-item" id="gi4">
+        <div class="cart-div">
+          <div class="cart-header">
+            <span>NAZIV PROIZVODA</span>
+            <span>KOLIČINA</span>
+          </div>
+
+          <div class="rows">
+            <!--
+            <div class="products-row" id="prod-row-2">
+              <span class="prod-name">Proizvod 2</span>
+              <div class="quantity-selector">
+                <img
+                  onclick="dodajUKosaru(this)"
+                  src="public/buttons/add-ellipse-svgrepo-com.svg"
+                  alt="Add"
+                />
+                <span class="amount">3</span>
+                <img
+                  src="public/buttons/button-circle-round-remove-svgrepo-com.svg"
+                  alt="Remove"
+                />
+              </div>
+            </div> -->
+
+            <!-- <div class="products-row" id="prod-row-2">
+              <span class="prod-name">Proizvod 2</span>
+              <div class="quantity-selector">
+                <img
+                  src="public/buttons/add-ellipse-svgrepo-com.svg"
+                  alt="Add"
+                />
+                <span class="amount">3</span>
+                <img
+                  src="public/buttons/button-circle-round-remove-svgrepo-com.svg"
+                  alt="Remove"
+                />
+              </div>
+            </div>
+
+            <div class="products-row" id="prod-row-3">
+              <span class="prod-name">Proizvod 3</span>
+              <div class="quantity-selector">
+                <img
+                  src="public/buttons/add-ellipse-svgrepo-com.svg"
+                  alt="Add"
+                />
+                <span class="amount">3</span>
+                <img
+                  src="public/buttons/button-circle-round-remove-svgrepo-com.svg"
+                  alt="Remove"
+                />
+              </div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
