@@ -24,23 +24,15 @@ router.get('/getCategories', (req, res) => {
 })
 
 router.get('/getProducts/:id', (req, res) => {
-  const sveKategorije = myData.categories;
-  let categoryId = parseInt(req.params.id);  // ID kategorije -> moramo parsirati jer su IDevi brojevi
-  let foundCategory = undefined;
-  for(const category of sveKategorije) {  // for ... of -> vraća values, for ... in -> vraća keys
-    if(category.id === categoryId) {
-      foundCategory = category;
-      break;
-    }
+  const categoryId = Number(req.params.id);
+
+  // myData.categories je array objekata
+  const foundCategory = myData.categories.find(category => category.id === categoryId);
+  if(!foundCategory) {  // kategorija nije pronađena
+    return res.status(404).json({error: 'Kategorija nije pronađena.'});
   }
 
-  const proizvodiKategorije = undefined; // svi proizvodi tražene kategorije (kategorija sa zadanim Id)
-  if(foundCategory) {
-    proizvodiKategorije = foundCategory.products;
-    res.json(proizvodiKategorije);
-  } else {
-    res.status(404);
-  }
+  res.json(foundCategory.products); // vraćamo proizvode tražene kategorije
 })
 
 module.exports = router;

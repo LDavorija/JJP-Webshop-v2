@@ -1,3 +1,5 @@
+// moglo bi se reći da ova datoteka zapravo simulira bazu podataka
+
 const data = {
     "website": "Oprema za trening",
     "categories": [

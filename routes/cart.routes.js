@@ -7,6 +7,12 @@ const express = require('express'); // uvod express modula
 const router = express.Router();
 const myData = require('../data/mydata.js');
 
+function findProductById(id) {
+  return myData.categories
+    .flatMap(category => category.products) // dobivamo 1 array svih produkata (iz svih kategorija)
+    .find(product => product.id === id);  // traži odgovarajući element u arrayu
+}
+
 // main cart ruta
 router.get('/', (req, res) => {
   res.render('cart');
@@ -14,54 +20,31 @@ router.get('/', (req, res) => {
 
 // dodavanje proizvoda u session cart
 router.get('/add/:id', (req, res) => {
-  if(!req.session.cart) {
-    req.session.cart = {};
+  const product = findProductById(Number(req.params.id));
+
+  if(!product) {
+    return res.status(404).json({error: 'Proizvod nije pronađen'});
   }
 
-  // pronalazak predmeta sa traženim IDem
-  const dobiveniID = parseInt(req.params.id);
-  let dodaniProizvod = undefined;
-  for(const category of myData.categories) {
-    for(const product of category.products) {
-      if(product.id === dobiveniID) {
-        dodaniProizvod = product;
-        break;
-      }
-    }
-    if(dodaniProizvod) {
-      break;
-    }
-  }
+  // ako session cart ne postoji inicijaliziraj kao prazan objekt, inače uzmi postojeći cart za taj session
+  req.session.cart = req.session.cart || {};
+  req.session.cart[product.id] = (req.session.cart[product.id] || 0) + 1; // dodaj proizvod u cart
 
-  // dodavanje proizvoda u cart
-  if(dodaniProizvod) {
-    if(req.session.cart[dobiveniID]) {  // proizvod već postoji u košarici
-      req.session.cart[dobiveniID].quantity += 1;
-    } else {  // proizvod ne postoji u košarici, stvoir objekt
-      req.session.cart[dobiveniID] = {product: dodaniProizvod, quantity: 1};
-    }
-    res.status(200);
-  } else {
-    res.status(404);
-  }
+  res.status(200);
+  // ako želim vratiti novi cart u bodyu responsea: res.json(req.session.cart)
 });
 
 // brisanje proizvoda iz sesssion carta
 router.get('/remove/:id', (req, res) => {
-  if(!req.session.cart) {
-    req.session.cart = {};
-  }
+  req.session.cart = req.session.cart || {};
 
-  const dobiveniID = parseInt(req.params.id); // ID proizvoda kojeg treba izbaciti iz carta
-  if(req.session.cart[dobiveniID]) {
-    if(req.session.cart[dobiveniID].quantity > 1) { // ako imamo više od 1 proizvoda u cartu, smanji za 1
-      req.session.cart[dobiveniID].quantity -= 1;
-    } else {
-      delete req.session.cart[dobiveniID];  // brisanje proizvoda iz košarice jer je količina nakon brisanja 0
+  const id = Number(req.params.id); // id proizvoda
+  if(req.session.cart[id]) {
+    req.session.cart[id]--;
+
+    if(req.session.cart[id] <= 0) {
+      delete req.session.cart[id];
     }
-    res.status(200);
-  } else {
-    res.status(404);
   }
 
   res.status(200);
@@ -69,11 +52,22 @@ router.get('/remove/:id', (req, res) => {
 
 // dohvaćanje JSON fajla session.cart
 router.get('/getAll', (req, res) => {
-  if(!req.session.cart) {
-    req.session.cart = {};
-  }
+  req.session.cart = req.session.cart || {};
 
-  res.json(req.session.cart);
+  const products = myData.categories.flatMap(category => category.products);  // dobijem array svih proizvoda
+  const cartProducts = Object.entries(req.session.cart).map(
+    ([id, quantity]) => {
+      const product = products.find(product => product.id === Number(id));
+
+      return {
+        ...product,
+        quantity
+      };
+    }
+  );
+
+  res.json(cartProducts);
+  // NAP.: kod je proširen jer želimo vraćati informacije o svakom pojedinom proizvodu, a ne samo ID i količinu
 })
 
 module.exports = router;
