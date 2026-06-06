@@ -20,6 +20,25 @@ let cart = [];
 let kategorije = [];
 let trenutnaKategorija;
 
+function getCartItem(productId) {
+  return cart.find(item => item.id === Number(productId));
+}
+
+function getCartQuantity(productId) {
+  const cartItem = getCartItem(productId);
+  return cartItem ? cartItem.quantity : 0;
+}
+
+function updateCartBadge() {
+  const kosarica = document.querySelector('.cartA .cart-number');
+  const ukupno = cart.reduce((sum, item) => sum + item.quantity, 0);
+  kosarica.innerHTML = ukupno > 0 ? ukupno : '';
+}
+
+function publicPath(path) {
+  return path.replace(/^public\//, '/');
+}
+
 // dohvaćanje trenutačnog stanja košarice/carta
 //let cart = undefined; // stanje carta na serveru
 async function getCart() {
@@ -107,24 +126,20 @@ async function promijeniKategoriju(novaKategorija, kliknutiElem) {
     const proizvodiKategorije = await getProducts(odabranaKategorija.id); // OBAVEZAN await!
     proizvodiKategorije.forEach(proizvod => {
 
-      const trenutnaKolicina = cart[proizvod.id] > 0 ? cart[proizvod.id].quantity : 0;
-      if(trenutnaKolicina === 0) {
-        hiddenAtribut = "hidden";
-      } else {
-        hiddenAtribut = "";
-      }
+      const trenutnaKolicina = getCartQuantity(proizvod.id);
+      const hiddenAtribut = trenutnaKolicina === 0 ? "hidden" : "";
 
       const proizvodHTML = `<div class="prod-container">
             <div class="img-container">
             <p class="cart-number" ${hiddenAtribut}>${trenutnaKolicina}</p>
               <img
-                src="${proizvod.image}"
+                src="${publicPath(proizvod.image)}"
                 alt="${proizvod.name}"
               />
               <img
-                onclick="dodajUKosaricu(this)" data-id="${proizvod.id}
+                onclick="dodajUKosaricu(this)" data-id="${proizvod.id}"
                 class="cart-over"
-                src="public/images/ikone/cart-shopping-svgrepo-com.svg"
+                src="/images/ikone/cart-shopping-svgrepo-com.svg"
                 alt="Košarica preko proizvoda"
               />
             </div>
@@ -141,53 +156,40 @@ async function promijeniKategoriju(novaKategorija, kliknutiElem) {
 
 }
 
-function dodajUKosaricu(elementImg) {   // elementImg je img element na koji je kliknuto na stranici
+async function dodajUKosaricu(elementImg) {   // elementImg je img element na koji je kliknuto na stranici
   const kartica = elementImg.closest('.prod-container'); // da dohvatimo najbliži product container
-  const produktID = elementImg.dataset.id;  // id proizvoda koji želimo dodati u košaricu
+  const productId = elementImg.dataset.id;  // id proizvoda koji želimo dodati u košaricu
 
-  await fetch('/cart/add/${produktId}');  // dodavanje proizvoda u cart
+  await fetch(`/cart/add/${productId}`);  // dodavanje proizvoda u cart
   cart = await(await fetch('/cart/getAll')).json(); // ažuriranje lokalnog carta
 
   //localStorage.setItem('cart', JSON.stringify(cart)); // objekt cart zapisujemo u JSON formatu u lokalni spremnik browsera
   // želim promijeniti  <p class="cart-number"></p>
 
-  const kolicina = cart[produktID] ? cart[produktID].quantity : 0;
+  const kolicina = getCartQuantity(productId);
   const cartNumber = kartica.querySelector('.cart-number'); // moramo selektirati u kartici jer se .cart-number nalazi u kartici, a ne u elementImg
   cartNumber.innerHTML = kolicina;  // cart[proizvod] je value
   cartNumber.removeAttribute('hidden'); // uklanjanje atributa hidden elementa cartNumber
 
-  // dobivanje ukupnog broja proizvoda
-  let ukupno = 0;
-  for(const value of Object.values(cart)) { // obavezno for ... of !
-    ukupno += value.quantity;
-  }
-  const kosarica = document.querySelector('.cartA .cart-number');
-  kosarica.innerHTML = ukupno > 0 ? ukupno : '';
+  updateCartBadge();
 
 }
 
-// // prikaz kod učitavanja stranice -> krećemo od prve kategorije - Crossfit
-// const pocetnaKat = document.querySelector('#gi4 ul li:first-child');
-// promijeniKategoriju('Crossfit', pocetnaKat);
-// const kosarica = document.querySelector('.cartA .cart-number');
+// prikaz kod učitavanja stranice -> krećemo od prve kategorije - Crossfit
+// Pocetni prikaz se pokrece tek nakon dohvata kategorija i kosarice.
 
-// // prikaz broja elemenata u košarici na početku
-// // ažuriranje podataka gore na košarici
+// prikaz broja elemenata u košarici na početku
+// ažuriranje podataka gore na košarici
 
-// // // dobivanje ukupnog broja proizvoda
-// let ukupno = 0;
-// Object.values(cartLS).forEach(kolicina => {
-//   ukupno += kolicina;
-// })
-// // želim promijeniti dodati količinu proizvoda kod ikonice košarice
-// if(ukupno > 0) {
-//   kosarica.innerHTML = ukupno;
-// }
+// // dobivanje ukupnog broja proizvoda
+// Broj proizvoda u kosarici racuna se iz session carta.
+// želim promijeniti dodati količinu proizvoda kod ikonice košarice
 
 // pokretačka funkcija
 async function pokretackaFja() {
   await Promise.all([getCategories(), getCart()]);
 
+  updateCartBadge();
   const pocetnaKat = document.querySelector('#gi4 ul li:first-child');
   promijeniKategoriju('Crossfit', pocetnaKat);
 }

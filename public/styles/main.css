@@ -166,6 +166,10 @@ h3 {
   height: auto;
   margin-left: 6rem;
 }
+.img-container img.cart-over {
+  width: 30px;
+  transform: none;
+}
 .img-container:hover .cart-over {
   opacity: 100;
 }
