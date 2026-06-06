@@ -107,7 +107,7 @@ async function promijeniKategoriju(novaKategorija, kliknutiElem) {
     const proizvodiKategorije = await getProducts(odabranaKategorija.id); // OBAVEZAN await!
     proizvodiKategorije.forEach(proizvod => {
 
-      const trenutnaKolicina = cart[proizvod.name] > 0 ? cart[proizvod.name] : 0;
+      const trenutnaKolicina = cart[proizvod.id] > 0 ? cart[proizvod.id].quantity : 0;
       if(trenutnaKolicina === 0) {
         hiddenAtribut = "hidden";
       } else {
@@ -122,8 +122,8 @@ async function promijeniKategoriju(novaKategorija, kliknutiElem) {
                 alt="${proizvod.name}"
               />
               <img
-                onclick="dodajUKosaricu(this)"
-                id="cart-over"
+                onclick="dodajUKosaricu(this)" data-id="${proizvod.id}
+                class="cart-over"
                 src="public/images/ikone/cart-shopping-svgrepo-com.svg"
                 alt="Košarica preko proizvoda"
               />
@@ -143,25 +143,26 @@ async function promijeniKategoriju(novaKategorija, kliknutiElem) {
 
 function dodajUKosaricu(elementImg) {   // elementImg je img element na koji je kliknuto na stranici
   const kartica = elementImg.closest('.prod-container'); // da dohvatimo najbliži product container
-  const proizvod = kartica.querySelector('.prod-bold').innerText;  // ime proizvoda
-  const kosarica = document.querySelector('.cartA .cart-number');
-  cart[proizvod]++;
+  const produktID = elementImg.dataset.id;  // id proizvoda koji želimo dodati u košaricu
+
+  await fetch('/cart/add/${produktId}');  // dodavanje proizvoda u cart
+  cart = await(await fetch('/cart/getAll')).json(); // ažuriranje lokalnog carta
+
   //localStorage.setItem('cart', JSON.stringify(cart)); // objekt cart zapisujemo u JSON formatu u lokalni spremnik browsera
   // želim promijeniti  <p class="cart-number"></p>
 
+  const kolicina = cart[produktID] ? cart[produktID].quantity : 0;
   const cartNumber = kartica.querySelector('.cart-number'); // moramo selektirati u kartici jer se .cart-number nalazi u kartici, a ne u elementImg
-  cartNumber.innerHTML = cart[proizvod];  // cart[proizvod] je value
+  cartNumber.innerHTML = kolicina;  // cart[proizvod] je value
   cartNumber.removeAttribute('hidden'); // uklanjanje atributa hidden elementa cartNumber
 
   // dobivanje ukupnog broja proizvoda
   let ukupno = 0;
-  Object.values(cart).forEach(kolicina => {
-    ukupno += kolicina;
-  })
-  // želim promijeniti dodati količinu proizvoda kod ikonice košarice
-  if(ukupno > 0) {
-    kosarica.innerHTML = ukupno;
+  for(const value of Object.values(cart)) { // obavezno for ... of !
+    ukupno += value.quantity;
   }
+  const kosarica = document.querySelector('.cartA .cart-number');
+  kosarica.innerHTML = ukupno > 0 ? ukupno : '';
 
 }
 

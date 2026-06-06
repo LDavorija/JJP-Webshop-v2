@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
 
 // dohvaćanje svih kategorija stranice -> vraća JSON array svih kategorija
 router.get('/getCategories', (req, res) => {
-    const sveKategorije = myData.data.categories;
+    const sveKategorije = myData.categories;
     if(sveKategorije) {
       res.json(sveKategorije);
     } else {
@@ -24,10 +24,10 @@ router.get('/getCategories', (req, res) => {
 })
 
 router.get('/getProducts/:id', (req, res) => {
-  const sveKategorije = myData.data.categories;
-  let categoryId = req.params.id;  // ID kategorije
+  const sveKategorije = myData.categories;
+  let categoryId = parseInt(req.params.id);  // ID kategorije -> moramo parsirati jer su IDevi brojevi
   let foundCategory = undefined;
-  for(category in sveKategorije) {
+  for(const category of sveKategorije) {  // for ... of -> vraća values, for ... in -> vraća keys
     if(category.id === categoryId) {
       foundCategory = category;
       break;

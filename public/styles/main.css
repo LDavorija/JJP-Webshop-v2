@@ -159,14 +159,14 @@ h3 {
 .prod-bold {
   font-weight: bolder;
 }
-#cart-over {
+.cart-over {
   opacity: 0;
   cursor: pointer;
   width: 30px;
   height: auto;
   margin-left: 6rem;
 }
-.img-container:hover #cart-over {
+.img-container:hover .cart-over {
   opacity: 100;
 }
 .img-container .cart-number {
@@ -255,7 +255,7 @@ h3 {
   padding: 0.2rem;
   background-color: pink;
 }
-#cart-over {
+.cart-over {
   opacity: 100;
 }
 }

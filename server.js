@@ -14,13 +14,20 @@ app.use(express.json()); // -> server prepoznaje poslani objekt od klijenta kao 
 // ako podatke prenosimo preko urla, koristi se urlencoded, a ako podatke prenosimo preko obrasca (skrivena polja), onda
 // koristimo json
 
-// ruteri
-const homeRouter = require('./routes/home.routes.js');
-const cartRouter = require('./routes/cart.routes.js');
-
 // postavljanje views (view komponenta MVC) i view engine
 app.set('views', path.join(__dirname, 'views'));  // setting, value
 app.set('view engine', 'ejs');
+
+// definiranje sjednice -> sjednice moraju biti prije rutera?
+app.use(expressSession({
+  secret: 'secret-key',
+  resave: false,
+  saveUninitialized: true
+}));
+
+// ruteri
+const homeRouter = require('./routes/home.routes.js');
+const cartRouter = require('./routes/cart.routes.js');
 
 // korištenje statičkog sadržaja
 app.use(express.static(path.join(__dirname, 'public')));
@@ -30,12 +37,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/home', homeRouter);
 app.use('/cart', cartRouter);
 
-// definiranje sjednice
-app.use(expressSession({
-  secret: 'secret-key',
-  resave: false,
-  saveUninitialized: true
-}));
+// redirect sa korijena na /home
+app.get('/', (req, res) => {
+  res.redirect('/home');
+})
 
 // port(vrata) servera(poslužitelja) jest 3000
 app.listen(3000, () => {

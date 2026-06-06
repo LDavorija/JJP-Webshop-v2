@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JJP - Košarica</title>
-    <link rel="stylesheet" href="public\styles\cart.css" />
-    <script defer src="public\scripts\cart.js"></script>
+    <link rel="stylesheet" href="\styles\cart.css" />
+    <script defer src="\scripts\cart.js"></script>
     <!-- obavezno defer jer se prvo treba učitati html, a tek onda js! -->
   </head>
   <body>
     <div class="grid-container">
       <div class="grid-item" id="gi1">
-        <img src="public/images/logotip/JJP.png" alt="JJP Logo" />
+        <img src="/images/logotip/JJP.png" alt="JJP Logo" />
       </div>
 
       <div class="grid-item" id="gi2">
@@ -19,15 +19,15 @@
       </div>
 
       <div class="grid-item" id="gi3">
-        <a class="cartA" href="cart.html">
+        <a class="cartA" href="cart">
           <p class="cart-number"></p>
           <img
-            src="public\images\ikone\cart-shopping-svgrepo-com.svg"
+            src="\images\ikone\cart-shopping-svgrepo-com.svg"
             alt="Ikonica košarice"
           />
         </a>
         <img
-          src="public/images/ikone/search-svgrepo-com.svg"
+          src="/images/ikone/search-svgrepo-com.svg"
           alt="Ikonica tražilice"
         />
       </div>
@@ -39,7 +39,7 @@
             <span>KOLIČINA</span>
           </div>
 
-          <div class="rows">
+          <div class="rows" id="cart-rows">
             <!--
             <div class="products-row" id="prod-row-2">
               <span class="prod-name">Proizvod 2</span>

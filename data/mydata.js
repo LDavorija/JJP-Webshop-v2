@@ -225,6 +225,4 @@ const data = {
 }
 
 // exportanje modula
-module.exports = {
-  categories: this.categories // unutar kategorija nalaze se produkti
-};
+module.exports = data;
