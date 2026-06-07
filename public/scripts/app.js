@@ -1,3 +1,5 @@
+// js kod za glavnu stranicu webshopa
+
 /* TO DO:
     * napravi da se ne prikazuje crveni krug kada je broj proizvoda 0 -> DONE
     * povezivanje sa backendom (drugi ciklus dio)
@@ -6,192 +8,141 @@
       b) ostvarenje sjednica kako bi se podaci na serverskoj strani mogli vezati uz pojedine korisnike
 */
 
-// prvi put kad se pokrene web stranica moram u local storage postaviti inicijalne vrijednosti broja pojedinih proizvoda
-// const cartLSString = localStorage.getItem('cart');  // dohvaćanje cart objekta iz local storagea
-// if(cartLSString) {
-//   // web stranica je bila prije posjećena, parsiraj i nastavi dalje
-//   cartLS = JSON.parse(localStorage.getItem('cart'));
-// } else {  // web stranica nije bila prije posjećena, inicijaliziraj cart objekt u local storageu
-//   localStorage.setItem('cart', JSON.stringify(cart));
-// }
-
 // varijable
-let cart = [];
-let kategorije = [];
-let trenutnaKategorija;
+let cart = [];  // array za dohvaćanja trenutnog sadržaja košarice sa servera
+let kategorije = [];  // array
+let trenutnaKategorija; // trenutno aktivna kategorija
 
+// fja za pronalazak proizvoda sa ID-em productId u košarici
 function getCartItem(productId) {
   return cart.find(item => item.id === Number(productId));
 }
 
+// fja za dobivanje količine proizvoda sa ID-em productId
 function getCartQuantity(productId) {
   const cartItem = getCartItem(productId);
   return cartItem ? cartItem.quantity : 0;
 }
 
+// cart badge se odnosi na brojač kod košarice gore desno
 function updateCartBadge() {
   const kosarica = document.querySelector('.cartA .cart-number');
   const ukupno = cart.reduce((sum, item) => sum + item.quantity, 0);
   kosarica.innerHTML = ukupno > 0 ? ukupno : '';
 }
 
-function publicPath(path) {
-  return path.replace(/^public\//, '/');
-}
-
-// dohvaćanje trenutačnog stanja košarice/carta
+// za svaki proizvod navedeno: ime proizvoda, putanja do fotografije proizvoda, id proizvoda, količina proizvoda u košarici
 //let cart = undefined; // stanje carta na serveru
 async function getCart() {
-  const url = '/cart/getAll';
-  try {
-    const response = await fetch(url);
-    if(!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
-
-    cart = await response.json();
-    console.log(cart);
-  } catch (error) {
-    console.error(error.message);
-  }
+  const response = await fetch('/cart/getAll');
+  cart = await response.json();
 }
 
 // dohvaćanje kategorija
 //let kategorije = undefined; // result je JS objekt koji sadržava kategorije
 async function getCategories() {
-  const url = '/home/getCategories';
-  try {
-    const response = await fetch(url);
-    if(!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
-
-    kategorije = await response.json(); // result je JS objekt koji sadržava kategorije
-    console.log(kategorije);
-  } catch (error) {
-    console.error(error.message);
-  }
+  const response = await fetch('/home/getCategories');
+  kategorije = await response.json();
 }
 
 // dohvaćanje proizvoda za kategoriju sa specifičnim ID-em
 async function getProducts(id) {
-  const url = `/home/getProducts/${id}`;
-  try {
-    const response = await fetch(url);
-    if(!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
-
-    const proizvodi = await response.json();
-    console.log(proizvodi);
-    return proizvodi;
-  } catch (error) {
-    console.error(error.message);
-    return [];
-  }
+  const response = await fetch(`/home/getProducts/${id}`);
+  return await response.json();
 }
-
-//getCategories();  // dohvaćanje kategorija sa servera
-//getCart();        // dohvaćanje trenutačnog stanja košarice sa servera
-//let trenutnaKategorija; // globalna varijabla za praćenje trenutne kategorije
 
 // fja mora biti asinkrona jer moramo čekati da se dohvate proizvodi! (funkcija getProducts)
 async function promijeniKategoriju(novaKategorija, kliknutiElem) {
-  // dohvaćanje elementa pomoću selektora
-  let kategorijaHeader = document.querySelector('#gi2 h2');
-
-  // promjena naslova
-  kategorijaHeader.innerHTML = novaKategorija;
-
-  // promjena varijable u js
-  trenutnaKategorija = novaKategorija;
-
-  let sveKategorije = document.querySelectorAll('#gi4 ul li');
-  sveKategorije.forEach((li) => {
-    li.classList.remove('active');
-  })
-
-  kliknutiElem.classList.add('active');
-
-  // renderiranje proizvoda iz data.js
-
-  // pronalazak podataka
+  const kategorijaHeader = document.querySelector('#gi2 h2');
+  const container = document.querySelector('.flex-prod-container');
   const odabranaKategorija = kategorije.find(kat => kat.name === novaKategorija);
 
-  // selektiranje kontejnera u koji idu proizvodi
-  const container = document.querySelector('.flex-prod-container');
-  container.innerHTML = "";  // čišćenje prethodnih proizvoda iz diva
+  kategorijaHeader.innerHTML = novaKategorija;
+  trenutnaKategorija = novaKategorija;
 
-  if(odabranaKategorija) {
-    const proizvodiKategorije = await getProducts(odabranaKategorija.id); // OBAVEZAN await!
-    proizvodiKategorije.forEach(proizvod => {
+  document.querySelectorAll('#gi4 ul li').forEach(li => {
+    li.classList.remove('active');
+  });
+  kliknutiElem.classList.add('active');
 
-      const trenutnaKolicina = getCartQuantity(proizvod.id);
-      const hiddenAtribut = trenutnaKolicina === 0 ? "hidden" : "";
+  container.innerHTML = '';
 
-      const proizvodHTML = `<div class="prod-container">
-            <div class="img-container">
-            <p class="cart-number" ${hiddenAtribut}>${trenutnaKolicina}</p>
-              <img
-                src="${publicPath(proizvod.image)}"
-                alt="${proizvod.name}"
-              />
-              <img
-                onclick="dodajUKosaricu(this)" data-id="${proizvod.id}"
-                class="cart-over"
-                src="/images/ikone/cart-shopping-svgrepo-com.svg"
-                alt="Košarica preko proizvoda"
-              />
-            </div>
-            <span class="prod-text"
-              ><span class="prod-bold">${proizvod.name}</span><br />${novaKategorija}</span
-            >
-          </div>`;
-
-      container.innerHTML += proizvodHTML;
-    })
-  } else {
-    container.innerHTML = "<p>Nema proizvoda u trenutnoj kategoriji.</p>"
+  if (!odabranaKategorija) {
+    container.innerHTML = '<p>Nema proizvoda u trenutnoj kategoriji.</p>';
+    return;
   }
 
+  const proizvodiKategorije = await getProducts(odabranaKategorija.id);
+
+  proizvodiKategorije.forEach(proizvod => {
+    const trenutnaKolicina = getCartQuantity(proizvod.id);
+    const hiddenAtribut = trenutnaKolicina === 0 ? 'hidden' : '';
+    const putanjaSlike = proizvod.image.replace('public', '');
+
+    const proizvodHTML = `<div class="prod-container">
+      <div class="img-container">
+        <p class="cart-number" ${hiddenAtribut}>${trenutnaKolicina}</p>
+        <img src="${putanjaSlike}" alt="${proizvod.name}" />
+        <img
+          onclick="dodajUKosaricu(this)"
+          data-id="${proizvod.id}"
+          class="cart-over"
+          src="/images/ikone/cart-shopping-svgrepo-com.svg"
+          alt="Kosarica preko proizvoda"
+        />
+      </div>
+      <span class="prod-text">
+        <span class="prod-bold">${proizvod.name}</span><br />${novaKategorija}
+      </span>
+    </div>`;
+
+    container.innerHTML += proizvodHTML;
+  });
 }
 
-async function dodajUKosaricu(elementImg) {   // elementImg je img element na koji je kliknuto na stranici
-  const kartica = elementImg.closest('.prod-container'); // da dohvatimo najbliži product container
+async function dodajUKosaricu(elementImg) { // elementImg je img element na koji je kliknuto na stranici
+  const kartica = elementImg.closest('.prod-container');  // da dohvatimo najbliži product container
   const productId = elementImg.dataset.id;  // id proizvoda koji želimo dodati u košaricu
 
-  await fetch(`/cart/add/${productId}`);  // dodavanje proizvoda u cart
-  cart = await(await fetch('/cart/getAll')).json(); // ažuriranje lokalnog carta
-
-  //localStorage.setItem('cart', JSON.stringify(cart)); // objekt cart zapisujemo u JSON formatu u lokalni spremnik browsera
-  // želim promijeniti  <p class="cart-number"></p>
+  const response = await fetch(`/cart/add/${productId}`);
+  cart = await response.json();
 
   const kolicina = getCartQuantity(productId);
-  const cartNumber = kartica.querySelector('.cart-number'); // moramo selektirati u kartici jer se .cart-number nalazi u kartici, a ne u elementImg
-  cartNumber.innerHTML = kolicina;  // cart[proizvod] je value
-  cartNumber.removeAttribute('hidden'); // uklanjanje atributa hidden elementa cartNumber
+  const cartNumber = kartica.querySelector('.cart-number');
+
+  cartNumber.innerHTML = kolicina;
+  cartNumber.removeAttribute('hidden');
 
   updateCartBadge();
-
 }
 
-// prikaz kod učitavanja stranice -> krećemo od prve kategorije - Crossfit
-// Pocetni prikaz se pokrece tek nakon dohvata kategorija i kosarice.
+// fja koja osvježava stranicu nakon povratka iz košarice
+async function osvjeziNakonPovratka() {
+  if (!trenutnaKategorija) {
+    return;
+  }
 
-// prikaz broja elemenata u košarici na početku
-// ažuriranje podataka gore na košarici
+  const aktivnaKategorija = document.querySelector('#gi4 ul li.active');
 
-// // dobivanje ukupnog broja proizvoda
-// Broj proizvoda u kosarici racuna se iz session carta.
-// želim promijeniti dodati količinu proizvoda kod ikonice košarice
+  await getCart();  // dohvat podataka za košaricu koja pripada trenutnoj sjednici
+  updateCartBadge();  // ažuriranje cart badgea gore desno
 
-// pokretačka funkcija
+  if (aktivnaKategorija) {
+    await promijeniKategoriju(trenutnaKategorija, aktivnaKategorija); // drugi dio osvježavanja stranice nakon povratka
+  }
+}
+
+// fja koja se pozove prilikom prvog pokretanja web stranice
 async function pokretackaFja() {
-  await Promise.all([getCategories(), getCart()]);
+  await Promise.all([getCategories(), getCart()]);  // dohvat kategorija i košarice
 
   updateCartBadge();
+
   const pocetnaKat = document.querySelector('#gi4 ul li:first-child');
-  promijeniKategoriju('Crossfit', pocetnaKat);
+  await promijeniKategoriju('Crossfit', pocetnaKat);  // prva kategorija koja se prikazuje je Crossfit
 }
 
-pokretackaFja();
+pokretackaFja();  // poziv fje prilikom prvog učitavanja web stranice
+
+// event listener koji se pokreće kada se vratimo iz košarice
+window.addEventListener('pageshow', osvjeziNakonPovratka);  // pageshow event -> when the page is shown to the user

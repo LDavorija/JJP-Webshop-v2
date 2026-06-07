@@ -4,31 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JJP - Shop</title>
-    <link rel="stylesheet" href="/styles/main.css" />
-    <!-- <script src="data/mydata.js"></script>
-    <script src="public/scripts/quantities.js"></script> -->
-    <script defer src="/scripts/app.js"></script>
-    <!-- na ovaj način imam pristup data.js u app.js -->
+    <link rel="stylesheet" href="/styles/main.css"/>  <!-- izgled -->
+    <!-- nije potrebno /public/styles jer Express static zna da se statičke datoteke nalaze u folderu public -->
+    <script defer src="/scripts/app.js"></script> <!-- funkcionalnost - defer znači da čekamo da se html preuzme prvo -->
   </head>
   <body>
     <div class="grid-container">
-      <div class="grid-item" id="gi1">
-        <img src="/images/logotip/JJP.png" alt="JJP Logo" />
-      </div>
-      <div class="grid-item" id="gi2"><h2>Suplementi</h2></div>
-      <div class="grid-item" id="gi3">
-        <a class="cartA" href="/cart">
-          <p class="cart-number"></p>
-          <img
-            src="/images/ikone/cart-shopping-svgrepo-com.svg"
-            alt="Ikonica košarice"
-          />
-        </a>
-        <img
-          src="/images/ikone/search-svgrepo-com.svg"
-          alt="Ikonica tražilice"
-        />
-      </div>
+      <!-- importanje headera iz partialsa -->
+      <%- include('partials/header', { headerTitle: '' }) %>
 
       <div class="grid-item" id="gi4">
         <span class="kateg">KATEGORIJE</span>
@@ -55,35 +38,10 @@
         </div>
       </div>
       <div class="grid-item" id="gi8">
-        <div class="flex-prod-container">
-          <!-- <div class="prod-container">
-            <div class="img-container">
-              <p class="cart-number"></p>
-              <img
-                src="/images/kategorija-suplementi/suplementi(1).jpg"
-                alt="Boca za vodu"
-              />
-              <img
-                onclick="dodajUKosaricu(this)"
-                id="cart-over"
-                src="/images/ikone/cart-shopping-svgrepo-com.svg"
-                alt="Košarica preko proizvoda"
-              />
-            </div>
-            <span class="prod-text"
-              ><span class="prod-bold">Boca za vodu</span><br />SUPLEMENTI</span
-            >
-          </div> -->
-        </div>
+        <div class="flex-prod-container"></div>
       </div>
-      <div class="grid-item" id="gi9">
-        <ul>
-          <li>Kontakt</li>
-          <li>Newsletter</li>
-          <li>Pretplati se</li>
-        </ul>
-        <p><span class="CC"></span>© JJP Shop</p>
-      </div>
+      <!-- importanje footera iz partialsa -->
+      <%- include('partials/footer') %>
     </div>
   </body>
 </html>

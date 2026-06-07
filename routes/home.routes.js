@@ -1,12 +1,12 @@
-// ova datoteka sadrži rute za košaricu
+// ova datoteka sadrži rute za home
 // struktura express koda: app.Method(Path, Handler)
-// ovo je controller dio MVC modela
+// ovdje se povezuju controller i model dio MVC-a
 
 const express = require('express'); // uvod express modula
-const router = express.Router();
-const myData = require('../data/mydata.js');
+const router = express.Router();  // router = controller
+const myData = require('../data/mydata.js');  // "baza podataka"
 
-// home ruta
+// home ruta -> jedina home ruta za prikaz, a ne dohvat sadržajaks
 router.get('/', (req, res) => {
   // rendera ejs template za home
   res.render('home')
@@ -14,25 +14,26 @@ router.get('/', (req, res) => {
 
 // dohvaćanje svih kategorija stranice -> vraća JSON array svih kategorija
 router.get('/getCategories', (req, res) => {
-    const sveKategorije = myData.categories;
-    if(sveKategorije) {
+    const sveKategorije = myData.categories;  // myData.categories je array objekata kategorija
+    if(sveKategorije) { // uspješno dohvaćene sve kategorije
       res.json(sveKategorije);
-    } else {
+    } else {  // neuspješan dohvat kategorija
       console.log('Neuspješan dohvat kategorija');
-      res.status(404);
+      res.sendStatus(404);
     }
 })
 
+// dohvaćanje proizvoda za kategoriju specifičnog ID-a, vraća array proizvoda određene kategorije
 router.get('/getProducts/:id', (req, res) => {
   const categoryId = Number(req.params.id);
 
   // myData.categories je array objekata
   const foundCategory = myData.categories.find(category => category.id === categoryId);
   if(!foundCategory) {  // kategorija nije pronađena
-    return res.status(404).json({error: 'Kategorija nije pronađena.'});
+    return res.sendStatus(404);
   }
 
   res.json(foundCategory.products); // vraćamo proizvode tražene kategorije
 })
 
-module.exports = router;
+module.exports = router;  // exportamo modul da bismo ga mogli koristiti u server.js, tj. mapirati ovaj ruter na /home putanju

@@ -1,4 +1,6 @@
 // moglo bi se reći da ova datoteka zapravo simulira bazu podataka
+// imamo objekt data koji se sastoji od key:value parova, a za key categories value jest array objekata
+// koji predstavljaju kategorije
 
 const data = {
     "website": "Oprema za trening",

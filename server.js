@@ -1,10 +1,10 @@
 // glavna serverska datoteka
 
 // moduli
-const path = require('path');
-const express = require('express');
+const path = require('path'); // za korištenje path.join()
+const express = require('express'); // express framework
 const expressSession = require('express-session');  // za stvaranje sjednica
-const ejs = require('ejs');
+const ejs = require('ejs'); // template/view engine - embedded javascript
 
 const app = express();  // express aplikacija
 
@@ -18,7 +18,7 @@ app.use(express.json()); // -> server prepoznaje poslani objekt od klijenta kao 
 app.set('views', path.join(__dirname, 'views'));  // setting, value
 app.set('view engine', 'ejs');
 
-// definiranje sjednice -> sjednice moraju biti prije rutera?
+// definiranje sjednice -> ovaj kod kreira i omogućava korištenje req.session u nastavku
 app.use(expressSession({
   secret: 'secret-key',
   resave: false,
@@ -33,7 +33,7 @@ const cartRouter = require('./routes/cart.routes.js');
 app.use(express.static(path.join(__dirname, 'public')));
 // sve iz public poslužujemo kao statički sadržaj -> JS skripte, CSS, fotografije, font, .svg datoteke...
 
-// mapiranje ruta na rutere
+// mapiranje rutera na rute
 app.use('/home', homeRouter);
 app.use('/cart', cartRouter);
 
